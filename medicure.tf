@@ -110,7 +110,7 @@ network_interface = aws_network_interface.proj-ni.id
 associate_with_private_ip = "10.0.1.10"
 }
 # Creating test Ubuntu EC2 instance
-resource "aws_instance" "proj-instance" {
+resource "aws_instance" "test-instance" {
 ami = "ami-053b0d53c279acc90"
 instance_type = "t2.micro"
 availability_zone = "us-east-1a"
@@ -132,7 +132,7 @@ Name = "test-instance"
 }
 
 # Creating prod Ubuntu EC2 instance
-resource "aws_instance" "proj-instance" {
+resource "aws_instance" "prod-instance" {
 ami = "ami-053b0d53c279acc90"
 instance_type = "t2.micro"
 availability_zone = "us-east-1a"
