@@ -12,27 +12,27 @@ region = "us-east-1"
 }
 #Configuration for Network Setup
 # Creating a VPC
-resource "aws_vpc" "proj-vpc" {
+resource "aws_vpc" "medicure-vpc" {
 cidr_block = "10.0.0.0/16"
 }
 # Create an Internet Gateway
-resource "aws_internet_gateway" "proj-ig" {
-vpc_id = aws_vpc.proj-vpc.id
+resource "aws_internet_gateway" "medicure-ig" {
+vpc_id = aws_vpc.medicure-vpc.id
 tags = {
 Name = "gateway1"
 }
 }
 # Setting up the route table
-resource "aws_route_table" "proj-rt" {
-vpc_id = aws_vpc.proj-vpc.id
+resource "aws_route_table" "medicure-rt" {
+vpc_id = aws_vpc.medicure-vpc.id
 route {
 # pointing to the internet
 cidr_block = "0.0.0.0/0"
-gateway_id = aws_internet_gateway.proj-ig.id
+gateway_id = aws_internet_gateway.medicure-ig.id
 }
 route {
 ipv6_cidr_block = "::/0"
-gateway_id = aws_internet_gateway.proj-ig.id
+gateway_id = aws_internet_gateway.medicure-ig.id
 }
 tags = {
 Name = "rt1"
@@ -40,8 +40,8 @@ Name = "rt1"
 }
 #Security Group Configuration
 # Setting up the subnet
-resource "aws_subnet" "proj-subnet" {
-vpc_id = aws_vpc.proj-vpc.id
+resource "aws_subnet" "medicure-subnet" {
+vpc_id = aws_vpc.medicure-vpc.id
 cidr_block = "10.0.1.0/24"
 availability_zone = "us-east-1a"
 tags = {
@@ -49,15 +49,15 @@ Name = "subnet1"
 }
 }
 # Associating the subnet with the route table
-resource "aws_route_table_association" "proj-rt-sub-assoc" {
-subnet_id = aws_subnet.proj-subnet.id
-route_table_id = aws_route_table.proj-rt.id
+resource "aws_route_table_association" "medicure-rt-sub-assoc" {
+subnet_id = aws_subnet.medicure-subnet.id
+route_table_id = aws_route_table.medicure-rt.id
 }
 # Creating a Security Group
-resource "aws_security_group" "proj-sg" {
-name = "proj-sg"
-description = "Enable web traffic for the project"
-vpc_id = aws_vpc.proj-vpc.id
+resource "aws_security_group" "medicure-sg" {
+name = "medicure-sg"
+description = "Enable web traffic for the medicureect"
+vpc_id = aws_vpc.medicure-vpc.id
 ingress {
 description = "HTTPS traffic"
 from_port = 443
@@ -94,19 +94,19 @@ cidr_blocks = ["0.0.0.0/0"]
 ipv6_cidr_blocks = ["::/0"]
 }
 tags = {
-Name = "medicure-proj-sg1"
+Name = "medicure-medicure-sg1"
 }
 }
 # Creating a new network interface
-resource "aws_network_interface" "proj-ni" {
-subnet_id = aws_subnet.proj-subnet.id
+resource "aws_network_interface" "medicure-ni" {
+subnet_id = aws_subnet.medicure-subnet.id
 private_ips = ["10.0.1.10"]
-security_groups = [aws_security_group.proj-sg.id]
+security_groups = [aws_security_group.medicure-sg.id]
 }
 # Attaching an elastic IP to the network interface
-resource "aws_eip" "proj-eip" {
+resource "aws_eip" "medicure-eip" {
 vpc = true
-network_interface = aws_network_interface.proj-ni.id
+network_interface = aws_network_interface.medicure-ni.id
 associate_with_private_ip = "10.0.1.10"
 }
 # Creating test Ubuntu EC2 instance
@@ -117,7 +117,7 @@ availability_zone = "us-east-1a"
 key_name = "ubuntu-devops-ec2"
 network_interface {
 device_index = 0
-network_interface_id = aws_network_interface.proj-ni.id
+network_interface_id = aws_network_interface.medicure-ni.id
 }
 user_data = <<-EOF
 #!/bin/bash
@@ -139,7 +139,7 @@ availability_zone = "us-east-1a"
 key_name = "ubuntu-devops-ec2"
 network_interface {
 device_index = 0
-network_interface_id = aws_network_interface.proj-ni.id
+network_interface_id = aws_network_interface.medicure-ni.id
 }
 user_data = <<-EOF
 #!/bin/bash
